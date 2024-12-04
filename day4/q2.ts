@@ -1,25 +1,25 @@
 import fs from "fs";
 
-let flag = true;
+const grid = fs.readFileSync("day4/input.txt").toString().split("\n");
 
-const program = fs
-  .readFileSync("day3/input.txt")
-  .toString()
-  .match(/mul\(\d{1,3},\d{1,3}\)|do\(\)|don't\(\)/g)
-  ?.reduce((a, c) => {
-    console.log(c);
-    if(c == "do()") {
-      flag = true
-      return a
+let xmasCnt = 0;
+
+for (let x = 0; x < grid.length; x++) {
+  for (let y = 0; y < grid[0].length; y++) {
+    if (grid[x][y] === "A") xmasCnt += findXmas(x, y);
+  }
+}
+
+console.log(xmasCnt);
+
+function findXmas(x: number, y: number): number {
+  let cnt = 0;
+
+  if (x>0 && x<grid.length-1 && y>0 && y<grid.length-1) {
+    if ( ((grid[x-1][y-1] === "M" && grid[x+1][y+1] === "S") || (grid[x-1][y-1] === "S" && grid[x+1][y+1] === "M")) && ((grid[x-1][y+1] === "M" && grid[x+1][y-1] === "S") || (grid[x-1][y+1] === "S" && grid[x+1][y-1] === "M"))) {
+      cnt++
     }
+  }
 
-    if(c == "don't()") {
-      flag = false
-      return a
-    }
-    
-    const term = c.match(/\d{1,3}/g);
-    return flag ? a + parseInt(term![0]) * parseInt(term![1]) : a; 
-  }, 0);
-
-console.log(program);
+  return cnt;
+}
