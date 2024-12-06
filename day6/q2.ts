@@ -23,13 +23,15 @@ let map = fs
 map.push([...new Array(map[0].length + 1).join("O")]);
 map.unshift([...new Array(map[0].length + 1).join("O")]);
 
-isBlocked()
+isBlocked();
 
 for (let k of new Map(visited).keys()) {
-  const [x, y] = k.split(",")
-  map[parseInt(x)][parseInt(y)] = "#";
-  if (isBlocked()) sum++;
-  map[parseInt(x)][parseInt(y)] = ".";
+  const [x, y] = k.split(",");
+  if (map[parseInt(x)][parseInt(y)] == ".") {
+    map[parseInt(x)][parseInt(y)] = "#";
+    if (isBlocked()) sum++;
+    map[parseInt(x)][parseInt(y)] = ".";
+  }
 }
 
 console.log(sum);
@@ -37,14 +39,14 @@ console.log(sum);
 function isBlocked(): boolean {
   let loc = startLoc;
   let dir = "U";
-  visited.clear()
+  visited.clear();
 
   do {
     visited.set(`${loc.x},${loc.y}`, dir);
     let nextLoc = getNext(loc, dir);
 
     while (map[nextLoc.x][nextLoc.y] == "#") {
-      dir = turn(dir)
+      dir = turn(dir);
       nextLoc = getNext(loc, dir);
     }
 
