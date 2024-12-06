@@ -6,10 +6,8 @@ interface Point {
 }
 
 let startLoc: Point = { x: 0, y: 0 };
-let loc: Point;
-let dir = "U";
-let visited = new Map<string, string>();
 let sum = 0;
+let visited = new Map<string, string>();
 
 let map = fs
   .readFileSync("day6/input.txt")
@@ -25,30 +23,28 @@ let map = fs
 map.push([...new Array(map[0].length + 1).join("O")]);
 map.unshift([...new Array(map[0].length + 1).join("O")]);
 
-// i dont think we need to test every coordinate here, but it runs in < 15 seconds so ill take it lol
-for (let i = 0; i < map.length; i++) {
-  for (let j = 0; j < map[0].length; j++) {
-    if (map[i][j] === ".") {
-      map[i][j] = "#";
-      if (isBlocked()) sum++;
-      map[i][j] = ".";
-    }
-  }
+isBlocked()
+
+for (let k of new Map(visited).keys()) {
+  const [x, y] = k.split(",")
+  map[parseInt(x)][parseInt(y)] = "#";
+  if (isBlocked()) sum++;
+  map[parseInt(x)][parseInt(y)] = ".";
 }
 
 console.log(sum);
 
 function isBlocked(): boolean {
-  loc = startLoc;
-  dir = "U"
-  visited.clear();
+  let loc = startLoc;
+  let dir = "U";
+  visited.clear()
 
   do {
     visited.set(`${loc.x},${loc.y}`, dir);
     let nextLoc = getNext(loc, dir);
 
     while (map[nextLoc.x][nextLoc.y] == "#") {
-      turn(dir)
+      dir = turn(dir)
       nextLoc = getNext(loc, dir);
     }
 
@@ -61,14 +57,14 @@ function isBlocked(): boolean {
 
 function getNext(loc: Point, dir: string): Point {
   if (dir == "U") return { x: loc.x - 1, y: loc.y };
-  if (dir == "D") return { x: loc.x + 1, y: loc.y };
-  if (dir == "L") return { x: loc.x, y: loc.y - 1 };
+  else if (dir == "D") return { x: loc.x + 1, y: loc.y };
+  else if (dir == "L") return { x: loc.x, y: loc.y - 1 };
   else return { x: loc.x, y: loc.y + 1 };
 }
 
 function turn(h: string) {
-  if (h == "U") dir = "R";
-  if (h == "D") dir = "L";
-  if (h == "L") dir = "U";
-  if (h == "R") dir = "D";
+  if (h == "U") return "R";
+  else if (h == "D") return "L";
+  else if (h == "L") return "U";
+  else return "D";
 }
