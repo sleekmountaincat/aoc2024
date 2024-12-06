@@ -25,6 +25,7 @@ let map = fs
 map.push([...new Array(map[0].length + 1).join("O")]);
 map.unshift([...new Array(map[0].length + 1).join("O")]);
 
+// i dont think we need to test every coordinate here, but it runs in < 15 seconds so ill take it lol
 for (let i = 0; i < map.length; i++) {
   for (let j = 0; j < map[0].length; j++) {
     if (map[i][j] === ".") {
