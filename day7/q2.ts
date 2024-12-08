@@ -1,9 +1,7 @@
 import fs from "fs";
-import cartesian from "fast-cartesian";
 
 let ops = ["*", "+", "|"];
 let testValTot = 0;
-let permutations = new Map<number, unknown[][]>
 
 const map = fs
   .readFileSync("day7/input.txt")
@@ -11,47 +9,40 @@ const map = fs
   .split("\n")
   .forEach((l) => {
     const tot = parseInt(l.split(": ")[0]);
-    let configurations;
     const terms = l
       .split(": ")[1]
       .split(" ")
       .map((n) => +n);
-    let size = terms.length - 1;
 
-    if (permutations.has(size)) {
-      configurations = permutations.get(size)
-    } else {
-      configurations = cartesian(Array(terms.length - 1).fill(ops));
-      permutations.set(size, configurations)
+    if (dfsCheck(terms, tot, 0, terms[0])) {
+      testValTot += tot;
     }
-
-    if (isValid(configurations!, terms, tot)) testValTot += tot;
   });
 
 console.log(testValTot);
 
-function isValid(
-  configurations: unknown[][],
-  terms: number[],
-  tot: number
-): boolean {
-  for (const config of configurations) {
-    let cnt = 0;
-    let configTotal = 0;
+function dfsCheck(terms: number[], target: number, index: number, currentTotal: number): boolean {
+  if(currentTotal > target) return false
+  if (index === terms.length - 1) {
+    return currentTotal === target;
+  }
 
-    if (config[cnt] === "*") configTotal = terms[0] * terms[1];
-    else if (config[cnt] === "+") configTotal = terms[0] + terms[1];
-    else configTotal = +`${terms[0]}${terms[1]}`;
-    cnt++;
+  for (const op of ops) {
+    const nextTerm = terms[index + 1];
+    let newTotal = currentTotal;
 
-    for (let x = 2; x < terms.length; x++) {
-      if (config[cnt] === "*") configTotal *= terms[x];
-      else if (config[cnt] === "+") configTotal += terms[x];
-      else configTotal = +`${configTotal}${terms[x]}`;
-      cnt++;
+    if (op === "*") {
+      newTotal *= nextTerm;
+    } else if (op === "+") {
+      newTotal += nextTerm;
+    } else if (op === "|") {
+      newTotal = +`${newTotal}${nextTerm}`;
     }
 
-    if (configTotal == tot) return true;
+    if (dfsCheck(terms, target, index + 1, newTotal)) {
+      return true;
+    }
   }
-  return false;
+
+  return false; 
 }
