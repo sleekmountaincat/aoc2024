@@ -10,9 +10,8 @@ const map = fs
   .split("\n")
   .forEach((l) => {
     const tot = parseInt(l.split(": ")[0])
-    const terms = l.split(": ")[1].split(" ").map((n) => parseInt(n));
-    const spaces = terms.length-1;
-    const configurations = cartesian(Array(spaces).fill(ops));
+    const terms = l.split(": ")[1].split(" ").map(n => +n);
+    const configurations = cartesian(Array(terms.length-1).fill(ops));
 
     if(isValid(configurations, terms, tot)) testValTot += tot
   });
