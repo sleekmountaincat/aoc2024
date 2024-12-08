@@ -3,6 +3,7 @@ import cartesian from "fast-cartesian";
 
 let ops = ["*", "+", "|"];
 let testValTot = 0;
+let permutations = new Map<number, unknown[][]>
 
 const map = fs
   .readFileSync("day7/input.txt")
@@ -10,13 +11,21 @@ const map = fs
   .split("\n")
   .forEach((l) => {
     const tot = parseInt(l.split(": ")[0]);
+    let configurations;
     const terms = l
       .split(": ")[1]
       .split(" ")
       .map((n) => +n);
-    const configurations = cartesian(Array(terms.length - 1).fill(ops));
+    let size = terms.length - 1;
 
-    if (isValid(configurations, terms, tot)) testValTot += tot;
+    if (permutations.has(size)) {
+      configurations = permutations.get(size)
+    } else {
+      configurations = cartesian(Array(terms.length - 1).fill(ops));
+      permutations.set(size, configurations)
+    }
+
+    if (isValid(configurations!, terms, tot)) testValTot += tot;
   });
 
 console.log(testValTot);
@@ -39,7 +48,7 @@ function isValid(
       if (config[cnt] === "*") configTotal *= terms[x];
       else if (config[cnt] === "+") configTotal += terms[x];
       else configTotal = +`${configTotal}${terms[x]}`;
-      cnt++
+      cnt++;
     }
 
     if (configTotal == tot) return true;
