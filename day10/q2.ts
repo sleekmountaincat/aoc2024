@@ -1,56 +1,39 @@
 import fs from "fs";
 
-let blocks: number[] = [];
-let cnt = 0;
-let size = new Map<number, number>();
-fs.readFileSync("day9/input.txt")
+const trailheads: number[][] = [];
+const map = fs
+  .readFileSync("day10/input.txt")
   .toString()
   .split("\n")
-  .forEach((l) => {
-    [...l].forEach((c, i) => {
-      if (i % 2) {
-        blocks = blocks.concat(Array(+c).fill(-1));
-      } else {
-        size.set(cnt, +c);
-        blocks = blocks.concat(Array(+c).fill(cnt))
-        cnt++;
-      }
+  .map((l, x) => {
+    [...l].forEach((c, y) => {
+      if (c == "0") trailheads.push([x+1, y+1]);
     });
+    return `X${l}X`;
   });
+map.push(new Array(map[0].length + 1).join("X"));
+map.unshift(new Array(map[0].length + 1).join("X"));
 
-for (const id of [...size.keys()].sort((a, b) => b - a)) {
-  const idSize = size.get(id)!;
-  let freeSpaceIdx = findFree(idSize)
+console.log(trailheads.reduce((a,c) => a + getScore(c),0));
 
-  if (freeSpaceIdx > -1) {
-    const idIdx = blocks.findIndex((c) => c == id);
+function getScore(currentPos: number[]): number {
+  let score = 0
+  const [x, y] = currentPos;
+  const currentTile = map[x][y]
 
-    if (idIdx >= freeSpaceIdx) {
-      for (let i = idIdx; i < idIdx + idSize; i++) {
-        blocks[i] = -1;
-      }
-      for (let i = freeSpaceIdx; i < freeSpaceIdx + idSize; i++) {
-        blocks[i] = id;
-      }
-    }
-  }
+  if (currentTile == "9") return 1;
+
+  if (+currentTile +1 == +map[x - 1][y])
+    score += getScore([x - 1, y]);
+
+  if (+currentTile +1 == +map[x + 1][y])
+    score += getScore([x + 1, y]);
+
+  if (+currentTile + 1== +map[x][y-1])
+    score += getScore([x, y-1]);
+
+  if (+currentTile + 1 == +map[x][y+1])
+    score += getScore([x, y+1]);
+
+  return score;
 }
-
-console.log(blocks.reduce((a, c, i) => (c >= 0 ? a + i * c : a), 0));
-
-function findFree(idSize: number): number {
-  for(let [i, v] of blocks.entries()) {
-    if(v == -1) {
-      let curIdx =i
-      let startIdx = i
-      let cnt = 1
-      while (blocks[curIdx]==-1) {
-        if (cnt==idSize) return startIdx
-        curIdx++
-        cnt++
-      }
-    }
-  }
-  return -1
-}
-
