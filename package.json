@@ -6,8 +6,9 @@
   "dependencies": {
     "@types/n-readlines": "^1.0.6",
     "fast-cartesian": "^9.0.0",
+    "memoize": "^10.0.0",
+    "moize": "^6.1.6",
     "n-readlines": "^1.0.1",
     "ts-node": "^10.9.2"
-  },
-  "type": "module"
+  }
 }

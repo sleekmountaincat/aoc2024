@@ -7,7 +7,7 @@ const stones = fs
   .map((l) => l.split(" ").map((c) => +c))
   .flatMap((c) => c);
 
-for (let i = 0; i < 75; i++) {
+for (let i = 0; i < 25; i++) {
   blink();
   console.log(i,stones.length)
 }
