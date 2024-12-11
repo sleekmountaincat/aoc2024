@@ -34,7 +34,7 @@ fs.readFileSync("day11/input.txt")
   .toString()
   .split("\n")
   .forEach(
-    (l) => (sum += l.split(" ").reduce((a, c) => a + stoneLength(+c, 25), 0))
+    (l) => (sum += l.split(" ").reduce((a, c) => a + stoneLength(+c, 75), 0))
   );
 
 console.log(sum);
