@@ -15,12 +15,12 @@ let cost = 0
 
 regions.forEach((pts) => {
   const [x, y] = pts[0];
-  cost += pts.length * getRegionArea(map[x][y], pts.slice());
+  cost += pts.length * getRegionPerimeter(map[x][y], pts.slice());
 });
 
 console.log(cost)
 
-function getRegionArea(rgn: string, pts: number[][]): number {
+function getRegionPerimeter(rgn: string, pts: number[][]): number {
   let area = 0;
 
   while (pts.length) {
