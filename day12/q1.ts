@@ -21,20 +21,20 @@ regions.forEach((pts) => {
 console.log(cost)
 
 function getRegionPerimeter(rgn: string, pts: number[][]): number {
-  let area = 0;
+  let p = 0;
 
   while (pts.length) {
     const [x, y] = pts.shift()!;
 
-    if ((x > 0 && map[x - 1][y] != rgn) || x === 0) area++;
+    if ((x > 0 && map[x - 1][y] != rgn) || x === 0) p++;
     if ((x < map.length - 1 && map[x + 1][y] != rgn) || x === map.length - 1)
-      area++;
-    if ((y > 0 && map[x][y - 1] != rgn) || y === 0) area++;
+      p++;
+    if ((y > 0 && map[x][y - 1] != rgn) || y === 0) p++;
     if ((y < map[0].length - 1 && map[x][y + 1] != rgn) || y === map.length - 1)
-      area++;
+      p++;
   }
 
-  return area;
+  return p;
 }
 
 function buildRegions() {
