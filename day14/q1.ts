@@ -3,8 +3,8 @@ import fs from "fs";
 const W = 101;
 const H = 103;
 const S = 100;
-const xMid = Math.floor(W / 2);
-const yMid = Math.floor(H / 2);
+const XMID = Math.floor(W / 2);
+const YMID = Math.floor(H / 2);
 
 const grid = [...Array(H)].map(() => Array(W).fill(0));
 
@@ -28,10 +28,10 @@ fs.readFileSync("day14/input.txt")
 let [q1, q2, q3, q4] = [0, 0, 0, 0];
 for (let y = 0; y < H; y++) {
   for (let x = 0; x < W; x++) {
-    if (x < xMid && y < yMid) q1 += grid[y][x];
-    if (x > xMid && y < yMid) q2 += grid[y][x];
-    if (x > xMid && y > yMid) q3 += grid[y][x];
-    if (x < xMid && y > yMid) q4 += grid[y][x];
+    if (x < XMID && y < YMID) q1 += grid[y][x];
+    if (x > XMID && y < YMID) q2 += grid[y][x];
+    if (x > XMID && y > YMID) q3 += grid[y][x];
+    if (x < XMID && y > YMID) q4 += grid[y][x];
   }
 }
 
