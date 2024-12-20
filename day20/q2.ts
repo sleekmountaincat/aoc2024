@@ -29,27 +29,24 @@ grid[S[1]][S[0]] = ".";
 grid[E[1]][E[0]] = ".";
 
 const pts = new Map<number, number[]>();
-const path = astar(S, E);
+const path = notAStarAtAll(S, E);
 const CUTOFF = 100;
+const BLINK = 20;
 let cnt = 0;
 
-for (let step = 0; step < path.length; step++) {
+for (let step = 0; step < path.length - CUTOFF; step++) {
   for (let short = step + CUTOFF; short < path.length; short++) {
     const [scStartX, scStartY] = pts.get(step)!;
     const [scEndX, scEndY] = pts.get(short)!;
     const d = Math.abs(scStartX - scEndX) + Math.abs(scStartY - scEndY);
 
-    if (d <= 20) {
-      if (short - step - d >= CUTOFF) {
-        cnt++;
-      }
-    }
+    if (d <= BLINK && short - step - d >= CUTOFF) cnt++;
   }
 }
 
 console.log(cnt);
 
-function astar(S: number[], E: number[]): number[] {
+function notAStarAtAll(S: number[], E: number[]): number[] {
   const heap = new Heap((a: Node, b: Node) => a.g - b.g);
   const [startX, startY] = S;
   const [endX, endY] = E;
