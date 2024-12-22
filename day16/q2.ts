@@ -40,42 +40,46 @@ function astar(S: number[], E: number[]): Node[][] {
   let paths: Node[][] = [];
   let best = Infinity;
 
-  heap.push({ x: S[0], y: S[1], d: "r", g: 0});
+  heap.push({ x: S[0], y: S[1], d: "r", g: 0,});
 
   while (!heap.isEmpty()) {
     const cur = heap.pop();
     const key = `${cur!.x},${cur!.y}`;
 
+    // If we reached the end, check if it's the best cost
     if (cur!.x === E[0] && cur!.y === E[1]) {
       if (cur!.g < best) {
         best = cur!.g;
-        paths = [reconstructPath(cur!)]; 
+        paths = [reconstructPath(cur!)]; // Start a new list of best paths
       } else if (cur!.g === best) {
-        paths.push(reconstructPath(cur!));
+        paths.push(reconstructPath(cur!)); // Add to the list of best paths
       }
       continue;
     }
 
+    // If the node has been visited with a strictly lower cost, skip it
     if (visited.has(key) && visited.get(key)! < cur!.g) continue;
 
+    // Update visited with the current cost
     visited.set(key, cur!.g);
 
     for (let [dX, dY] of dirs) {
       const nX = cur!.x + dX;
       const nY = cur!.y + dY;
 
+      // Skip invalid cells
       if (grid[nY][nX] === "#") continue;
 
       const d = getDir(cur!.x, cur!.y, nX, nY);
       const g = cur!.g + (d === cur!.d ? 1 : 1001);
       const n = { x: nX, y: nY, d, g, parent: cur };
 
-      // Push the node to the heap if it's valid
+      // Add the node to the heap for further exploration
       heap.push(n);
     }
   }
 
-  console.log(paths.length)
+  console.log(`Number of best paths: ${paths.length}`);
   return paths;
 }
 
