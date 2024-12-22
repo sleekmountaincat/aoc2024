@@ -36,7 +36,7 @@ console.log(grid.reduce((a,c) => a + [...c.matchAll(/\./g)].length,0))
 
 function astar(S: number[], E: number[]): Node[][] {
   const heap = new Heap((a: Node, b: Node) => a.g - b.g);
-  const visited = new Map<string, Node>();
+  const visited = new Map<string, number>();
   let paths: Node[][] = [];
   let best = Infinity;
 
@@ -47,44 +47,44 @@ function astar(S: number[], E: number[]): Node[][] {
     const key = `${cur!.x},${cur!.y}`;
 
     if (cur!.x === E[0] && cur!.y === E[1]) {
-      const fullPath = reconstructPath(cur!);
       if (cur!.g < best) {
         best = cur!.g;
-        paths = [fullPath];
+        paths = [reconstructPath(cur!)]; 
       } else if (cur!.g === best) {
-        console.log("WHAT THE FUCK")
-        paths.push(fullPath);
+        paths.push(reconstructPath(cur!));
       }
+      continue;
     }
 
-    if (visited.has(key) && visited.get(key)!.g < cur!.g) continue;
+    if (visited.has(key) && visited.get(key)! < cur!.g) continue;
 
-    visited.set(key, cur!);
+    visited.set(key, cur!.g);
 
     for (let [dX, dY] of dirs) {
       const nX = cur!.x + dX;
       const nY = cur!.y + dY;
 
-      const d = getDir(cur!.x, cur!.y, nX, nY);
-      const g = cur!.g + (d === cur!.d ? 1 : 1);
-      const n = { x: nX, y: nY, d, g, parent: cur }
+      if (grid[nY][nX] === "#") continue;
 
-      if (grid[nY][nX]!== "#") heap.push(n);
+      const d = getDir(cur!.x, cur!.y, nX, nY);
+      const g = cur!.g + (d === cur!.d ? 1 : 1001);
+      const n = { x: nX, y: nY, d, g, parent: cur };
+
+      // Push the node to the heap if it's valid
+      heap.push(n);
     }
   }
+
   console.log(paths.length)
-  console.log(paths.reduce((a,c) => {
-    return a + c.length
-  }, 0))
-  
   return paths;
 }
 
+// Helper function to reconstruct the path
 function reconstructPath(node: Node): Node[] {
   const path = [];
   while (node) {
-      path.unshift(node); // Add to the start of the array
-      node = node.parent;
+    path.unshift(node);
+    node = node.parent!;
   }
   return path;
 }
