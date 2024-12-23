@@ -13,13 +13,15 @@ fs.readFileSync("day23/input.txt")
 
 const cx = new Set<string>();
 for (const [p, n] of puters) {
-  n.flatMap((p1, i) =>
-    n.slice(i + 1).forEach((p2) => {
-      if (puters.get(p1)!.includes(p2)) {
-        cx.add([p, p1, p2].sort().join("-"));
-      }
-    })
-  );
+  if (p.startsWith("t")) {
+    n.flatMap((p1, i) =>
+      n.slice(i + 1).forEach((p2) => {
+        if (puters.get(p1)!.includes(p2)) {
+          cx.add([p, p1, p2].sort().join("-"));
+        }
+      })
+    );
+  }
 }
 
 console.log(cx);
