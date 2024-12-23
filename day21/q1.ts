@@ -1,18 +1,4 @@
-// +---+---+---+
-// | 7 | 8 | 9 |
-// +---+---+---+
-// | 4 | 5 | 6 |
-// +---+---+---+
-// | 1 | 2 | 3 |
-// +---+---+---+
-//     | 0 | A |
-//     +---+---+
-
-//     +---+---+
-//     | ^ | A |
-// +---+---+---+
-// | < | v | > |
-// +---+---+---+   
+import fs from "fs";
 
 type Keypad = {
   [key: string]: number[];
@@ -46,9 +32,9 @@ const doorKeypadCoords: number[][] = Object.keys(doorKeypad).map(
 );
 
 const ctlKeypad: Keypad = {
-  "A": [2, 0],
+  A: [2, 0],
   "<": [0, 1],
-  "v": [1, 1],
+  v: [1, 1],
   "^": [1, 0],
   ">": [2, 1],
 };
@@ -57,7 +43,7 @@ const ctlKeypadCoords: number[][] = Object.keys(ctlKeypad).map(
 );
 
 const dirs: Directions = {
-  "v": [0, 1],
+  v: [0, 1],
   ">": [1, 0],
   "^": [0, -1],
   "<": [-1, 0],
@@ -73,6 +59,9 @@ function shortest(s: number[], e: number[], valid: number[][]): string[] {
 
   while (q.length) {
     const cur = q.shift();
+    if (cur!.x === 0 && cur!.y === 0 && valid.length < 11) throw "KERNEL PANIC";
+    if (cur!.x === 0 && cur!.y === 3 && valid.length > 10) throw "KERNEL PANIC";
+
     const key = `${cur!.x},${cur!.y}`;
 
     if (cur!.x === e[0] && cur!.y === e[1]) {
@@ -93,9 +82,19 @@ function shortest(s: number[], e: number[], valid: number[][]): string[] {
   }
 
   return paths
+    .map((p) => p.reverse())
     .sort((x, y) => {
       const xLeft = x.reduce((a, c, i) => a + (c === "<" ? i : 0), 0);
       const yLeft = y.reduce((a, c, i) => a + (c === "<" ? i : 0), 0);
+
+      const xAdj = x.reduce(
+        (a, c, i) => a + (i < x.length - 1 && x[i + 1] === c ? 1 : 0),
+        0
+      );
+      const yAdj = y.reduce(
+        (a, c, i) => a + (i < y.length - 1 && y[i + 1] === c ? 1 : 0),
+        0
+      );
 
       const xUpDown = x.reduce(
         (a, c, i) => a + (c === "^" || c === "v" ? i : 0),
@@ -106,6 +105,7 @@ function shortest(s: number[], e: number[], valid: number[][]): string[] {
         0
       );
 
+      if (xAdj !== yAdj) return yAdj - xAdj;
       if (xLeft !== yLeft) return xLeft - yLeft;
       if (xUpDown !== yUpDown) return xUpDown - yUpDown;
       return 0;
@@ -113,13 +113,13 @@ function shortest(s: number[], e: number[], valid: number[][]): string[] {
     .map((p) => [...p, "A"])[0];
 }
 
-const codes = ["029A", "980A", "179A", "456A", "379A"];
-
 //////////////////////////////////////////////////////////////
+
+const codes = fs.readFileSync("day21/input.txt").toString().split("\n");
 
 const sum = codes.reduce((a, c) => {
   const sequence = buildSequence([...c]);
-  console.log(c, sequence.length, parseInt(c));
+  console.log(c, sequence.length, parseInt(c), sequence);
   return a + parseInt(c) * sequence.length;
 }, 0);
 
